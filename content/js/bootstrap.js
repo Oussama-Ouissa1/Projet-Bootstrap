@@ -4498,12 +4498,14 @@
 const cardContainer = document.getElementById('card-container');
 
 // Fonction pour créer une carte HTML à partir des données
-function createCard(data) {
+function createCard(data, index) {
+  const isEven = index % 2 === 0;
     return `
         <div class="card mb-3 " style="margin: 20px; max-width: 900px">
-            <div class="row g-0">
+            <div id="reverse" class="row g-0">
+            ${isEven ? `
                 <div class="col-md-4">
-                    <img src="${data.image}" class="img-fluid rounded" alt="${data.title}">
+                    <img src="${data.image}" class="img-fluid rounded-start" alt="${data.title}">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
@@ -4512,6 +4514,18 @@ function createCard(data) {
                         <p class="card-text d-flex justify-content-end"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
                     </div>
                 </div>
+                ` : `
+                <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">${data.title}</h5>
+                            <p class="card-text">${data.description}</p>
+                            <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <img src="${data.image}" class="img-fluid rounded-end" alt="${data.title}">
+                    </div>
+                `}
             </div>
         </div>
     `;
@@ -4519,11 +4533,10 @@ function createCard(data) {
 
 // Charger les données depuis le fichier JSON
 fetch('data.json')
-    .then(response => response.json())  // Lire et convertir la réponse en JSON
+    .then(response => response.json())
     .then(jsonData => {
-        // Boucle pour chaque élément du fichier JSON
-        jsonData.forEach(item => {
-            cardContainer.innerHTML += createCard(item);  // Ajouter chaque carte au conteneur
+        jsonData.forEach((item, index) => {
+            cardContainer.innerHTML += createCard(item, index);
         });
     })
     .catch(error => console.error('Erreur lors du chargement des données JSON:', error));
